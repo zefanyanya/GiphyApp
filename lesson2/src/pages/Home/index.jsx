@@ -1,37 +1,72 @@
-import React from 'react'
+// import React, { Component } from 'react'
 import Gif from '../../components/Gif'
-import gifs from '../../data/gifs'
+import config from '../../lib/config'
+import { useEffect, useState } from 'react'
+// import data from '../../data/gifs';
+// import SearchBar from '../../components/SearchBar';
 
-// const gif = {
-//     id: '4HrBfVJJveBNS9ytSk',
-//     title: 'Nintendo Plotting GIF by Gaming GIFs',
-//     uploadedDate: '2018-04-03 15:21:50',
-//     url: 'https://media4.giphy.com/media/4HrBfVJJveBNS9ytSk/200w.gif?cid=cb3f2bebpuo6jj0g5f9gfibjre2zzbb4yb1cfshtplanlrpw&rid=200w.gif&ct=g',
-//     webp: 'https://media4.giphy.com/media/4HrBfVJJveBNS9ytSk/giphy.webp?cid=cb3f2bebpuo6jj0g5f9gfibjre2zzbb4yb1cfshtplanlrpw&rid=giphy.webp&ct=g',
-//   }
+const Home = () => {
+    const [gifs, setGifs] = useState ([]);
+    const [text, setText] = useState("");
+    // const API_KEY = process.env.REACT_APP_GIPHY_KEY;
+
+    // const  handleInput = (e) => {
+    //   setText({ text: e.target.value });
+    // }
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      const query = e.target.value;
+      getGifs(query);
+    };
+
+    const handleChange = (e) => {
+      e.preventDefault();
+      setText((prevState) => (prevState = e.target.value));
+      getGifs(text);
+    };
+  
+    useEffect(() => {
+      if (text !== "") {
+        console.log(text);
+        getGifs(text);
+      }
+    },[getGifs]);
+
+    const getGifs = async (e) => {
+      // e.preventDefault();
+    
+        const gifs = await fetch(
+            `${config.GIPHY_BASE_URL}/gifs/search?q=${text}&api_key=${process.env.REACT_APP_GIPHY_KEY}&limit=12}`
+          ).then((response) => response.json());
+    setGifs(gifs.data);
+        };
+  
+      return (
+        <div> 
+          <form className="form-search" onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    className="form-search__input"
+                    required
+                    onChange={handleChange}
+                  />
+              <button type="submit" className="form-search__button">Search</button>
+          </form>
 
 
-export default function Home(){
-    return (
-        <div>
-            <form className="form-search">
-                <input type="text" placeholder="Search" className="form_search__input" required/>
-                <button type="submit" className="form-search__button">Search</button>
-            </form>
+            <div className="gifs">
+              {gifs?.map((gif) => (
+                  <Gif
+                    key={gif.id}
+                    url={gif.images.original.url}
+                    title={gif.title}
+                  />
+                  // <img src={gif.images.original.url} className="Gif" />
+              ))}
+            </div>
+            </div>
+      );        
+};
+export default Home;
 
-        <div className="gifs">
-            {gifs.map((gif) => (
-                <React.Fragment key={gif.id}>
-                    {gif.rating === 'e' && (
-                         <Gif 
-                         // key={gif.id}
-                         url={gif.url}
-                         title={gif.title}
-                     />
-                    )}
-            </React.Fragment>
-            ))}
-        </div>
-        </div>
-    )
-}
