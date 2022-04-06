@@ -1,72 +1,56 @@
-// import React, { Component } from 'react'
-import Gif from '../../components/Gif'
-import config from '../../lib/config'
-import { useEffect, useState } from 'react'
-// import data from '../../data/gifs';
-// import SearchBar from '../../components/SearchBar';
+import Gif from "../../components/Gif";
+// import config from "../../lib/config";
+import { useState } from "react";
+import SearchBar from "../../components/SearchBar";
+import { setQuery } from "../../queryReducer/queryAction";
+import { useSelector, useDispatch } from "react-redux";
 
 const Home = () => {
-    const [gifs, setGifs] = useState ([]);
-    const [text, setText] = useState("");
-    // const API_KEY = process.env.REACT_APP_GIPHY_KEY;
+  // const [gifs, setGifs] = useState([]);
+  // const [text, setText] = useState("");
+  const GIPHY_KEY = process.env.REACT_APP_GIPHY_KEY;
+  const currentQuery = useSelector((state) => state.query.value);
+  const dispatch = useDispatch();
+  // const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
 
-    // const  handleInput = (e) => {
-    //   setText({ text: e.target.value });
-    // }
+  // const handleInput = (e) => {
+  //   setText(e.target.value);
+  // };
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      const query = e.target.value;
-      getGifs(query);
-    };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    getGifs();
+  };
 
-    const handleChange = (e) => {
-      e.preventDefault();
-      setText((prevState) => (prevState = e.target.value));
-      getGifs(text);
-    };
-  
-    useEffect(() => {
-      if (text !== "") {
-        console.log(text);
-        getGifs(text);
-      }
-    },[getGifs]);
+  const handleChange = (e) => {
+    dispatch(setQuery(e.target.value));
+  };
 
-    const getGifs = async (e) => {
-      // e.preventDefault();
-    
-        const gifs = await fetch(
-            `${config.GIPHY_BASE_URL}/gifs/search?q=${text}&api_key=${process.env.REACT_APP_GIPHY_KEY}&limit=12}`
-          ).then((response) => response.json());
-    setGifs(gifs.data);
-        };
-  
-      return (
-        <div> 
-          <form className="form-search" onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    className="form-search__input"
-                    required
-                    onChange={handleChange}
-                  />
-              <button type="submit" className="form-search__button">Search</button>
-          </form>
+  const getGifs = async () => {
+    const url = `https://api.giphy.com/v1/gifs/search?q=${currentQuery
+      .replace(/\s+/g, "+")
+      .toLowerCase()}&api_key=${GIPHY_KEY}&limit=12`;
 
+    const response = await fetch(url)
+      .then((res) => res.json())
+      .catch((e) => console.log(e));
+    console.log(response.data);
+    setResults(response.data);
+  };
 
-            <div className="gifs">
-              {gifs?.map((gif) => (
-                  <Gif
-                    key={gif.id}
-                    url={gif.images.original.url}
-                    title={gif.title}
-                  />
-                  // <img src={gif.images.original.url} className="Gif" />
-              ))}
-            </div>
-            </div>
-      );        
+  return (
+    <div>
+      <SearchBar
+        query={currentQuery}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+      />
+      <br />
+      {results.map((it) => (
+        <Gif key={it.id} source={it.images.downsized.url} title={it.title} />
+      ))}
+    </div>
+  );
 };
 export default Home;
-

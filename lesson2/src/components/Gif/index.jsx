@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default function Gif({ url, title}) {
+
+export default function Gif({ source, url, title}) {
   return (
     <div className="gif">
-      <img className="image" src={url} alt={title}/>
+      <img className="image" src={source} alt={title}/>
       <p>{title}</p>
     </div>
     
