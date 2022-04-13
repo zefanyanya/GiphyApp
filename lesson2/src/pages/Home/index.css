@@ -1,0 +1,23 @@
+.container {
+    margin: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-radius: 4px;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+}
+
+.card{
+    grid-template-columns: repeat(2, 1fr);
+    border: 2px solid #e7e7e7;
+    color: white;
+    background-color: grey;
+    border-radius: 4px;
+    display: flex;
+    border-radius: 4px;
+}
+
+.searchbar{
+    justify-content: center;
+}

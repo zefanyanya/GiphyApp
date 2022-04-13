@@ -4,6 +4,9 @@ import { useState } from "react";
 import SearchBar from "../../components/SearchBar";
 import { setQuery } from "../../queryReducer/queryAction";
 import { useSelector, useDispatch } from "react-redux";
+import "./index.css";
+import { Toolbar } from "@material-ui/core";
+// import { Toolbar } from "@material-ui/core";
 
 const Home = () => {
   // const [gifs, setGifs] = useState([]);
@@ -41,15 +44,25 @@ const Home = () => {
 
   return (
     <div>
-      <SearchBar
-        query={currentQuery}
-        onChange={handleChange}
-        onSubmit={handleSubmit}
-      />
+      <Toolbar>
+        <SearchBar
+          className="searchbar"
+          query={currentQuery}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+        />
+      </Toolbar>
       <br />
-      {results.map((it) => (
-        <Gif key={it.id} source={it.images.downsized.url} title={it.title} />
-      ))}
+      <div className="container">
+        {results.map((it) => (
+          <Gif
+            className="card"
+            key={it.id}
+            source={it.images.downsized.url}
+            title={it.title}
+          />
+        ))}
+      </div>
     </div>
   );
 };
