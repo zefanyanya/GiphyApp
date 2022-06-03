@@ -3,5 +3,6 @@
     height: 50vh;
     width: 80vh;
     grid-template-columns: repeat(3, 1fr);
+    
 }
 
